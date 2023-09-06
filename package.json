@@ -2,13 +2,14 @@
   "name": "miracle",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "files": ["dist/**", "src/scripts", "src/test-server"],
   "type": "module",
   "directories": {
     "lib": "lib"
   },
   "scripts": {
-    
+    "build-pkg": "tsc"
   },
   "keywords": [],
   "author": "",

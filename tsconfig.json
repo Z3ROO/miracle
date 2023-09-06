@@ -3,8 +3,10 @@
     "target": "ESNext",
     "module": "ESNext",
     "esModuleInterop": true,
-    "outDir": "public/",
-    "noImplicitAny": false
+    "outDir": "dist/",
+    "noImplicitAny": false,
+    "declaration": true,
+    "sourceMap": true
   },
-  "include": ["src/**/*.ts",]
+  "include": ["src/**/*.ts", "src/**/*.js"]
 }
