@@ -1,28 +1,38 @@
-import esbuild from 'esbuild';
+#!/usr/bin/env node
+
+import esbuild, { build } from 'esbuild';
 import { join } from 'path';
 import fs from 'fs';
 
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import includeBundleIntoHTML from './config/includeScripts.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const cwd = process.cwd();
+
 const entryDirectory = join(cwd, 'src', 'index.tsx');
-
-const buildDirectory = join(cwd, 'dev-build');
-
+const buildDirectory = join(__dirname, 'dev-build');
 const publicDir = join(cwd, 'public');
 
+//Removes dev-build folder if exists
 if (fs.existsSync(buildDirectory))
-  fs.rmdirSync(buildDirectory, { recursive: true });
+  fs.rmSync(buildDirectory, { recursive: true });
 
-fs.cpSync(publicDir, buildDirectory, {recursive: true})
+//Copy users actual public folder to serve
+fs.cpSync(publicDir, buildDirectory, {recursive: true});
 
 let htmlFile = fs.readFileSync(join(buildDirectory, 'index.html'), 'utf-8');
 htmlFile = includeBundleIntoHTML(htmlFile);
 
 fs.writeFileSync(join(buildDirectory, 'index.html'), htmlFile);
 
-esbuild.build({
+const ctx = await esbuild.context({
   entryPoints:[entryDirectory],
   bundle: true,
-  outfile: './dev-build/static/js/bundle.js',
+  outfile: join(__dirname, 'dev-build', 'static', 'js', 'bundle.js'),
   jsxFactory: 'Miracle.createElement',
   target: 'es6',
   format: 'esm',
@@ -32,15 +42,9 @@ esbuild.build({
   }
 });
 
-function includeBundleIntoHTML(htmlFile) {
-  const headTagIndex = htmlFile.match(/<\/head>/).index;
+let { host, port } = await ctx.serve({
+  servedir: join(__dirname, 'dev-build'),
+})
 
-  const leftHalf = htmlFile.substring(0, headTagIndex);
-  const rightHalf = htmlFile.substring(headTagIndex);
+console.log(host,'   ----   ', port);
 
-  const middle = `
-    <script src="static/js/bundle.js" type="module"></script>
-  `;
-
-  return leftHalf+middle+rightHalf;
-}

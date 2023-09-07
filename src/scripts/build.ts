@@ -1,6 +1,9 @@
+#!/usr/bin/env node
+
 import esbuild from 'esbuild';
 import { join } from 'path';
 import fs from 'fs';
+import includeBundleIntoHTML from './config/includeScripts.js';
 
 const cwd = process.cwd();
 const entryDirectory = join(cwd, 'src', 'index.tsx');
@@ -10,7 +13,7 @@ const buildDirectory = join(cwd, 'build');
 const publicDir = join(cwd, 'public');
 
 if (fs.existsSync(buildDirectory))
-  fs.rmdirSync(buildDirectory, { recursive: true });
+  fs.rmSync(buildDirectory, { recursive: true });
 
 fs.cpSync(publicDir, buildDirectory, {recursive: true})
 
@@ -31,16 +34,3 @@ esbuild.build({
     '.tsx': 'tsx'
   }
 });
-
-function includeBundleIntoHTML(htmlFile) {
-  const headTagIndex = htmlFile.match(/<\/head>/).index;
-
-  const leftHalf = htmlFile.substring(0, headTagIndex);
-  const rightHalf = htmlFile.substring(headTagIndex);
-
-  const middle = `
-    <script src="static/js/bundle.js" type="module"></script>
-  `;
-
-  return leftHalf+middle+rightHalf;
-}

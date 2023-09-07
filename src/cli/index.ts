@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { exec } from 'child_process';
 import CliMaker, { ICommand, IConfig } from '@z3ro/clim';
 
