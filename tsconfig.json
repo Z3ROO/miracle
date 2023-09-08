@@ -9,5 +9,5 @@
     "sourceMap": true,
     "moduleResolution": "NodeNext"
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/cli/*.ts", "src/Miracle/*.ts", "src/scripts/*.ts"]
 }

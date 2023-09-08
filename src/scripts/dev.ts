@@ -14,7 +14,7 @@ const __dirname = dirname(__filename);
 const cwd = process.cwd();
 
 const entryDirectory = join(cwd, 'src', 'index.tsx');
-const buildDirectory = join(__dirname, 'dev-build');
+const buildDirectory = join(__dirname, '../', 'dev-build');
 const publicDir = join(cwd, 'public');
 
 //Removes dev-build folder if exists
@@ -32,7 +32,7 @@ fs.writeFileSync(join(buildDirectory, 'index.html'), htmlFile);
 const ctx = await esbuild.context({
   entryPoints:[entryDirectory],
   bundle: true,
-  outfile: join(__dirname, 'dev-build', 'static', 'js', 'bundle.js'),
+  outfile: join(buildDirectory, 'static', 'js', 'bundle.js'),
   jsxFactory: 'Miracle.createElement',
   target: 'es6',
   format: 'esm',
@@ -43,7 +43,7 @@ const ctx = await esbuild.context({
 });
 
 let { host, port } = await ctx.serve({
-  servedir: join(__dirname, 'dev-build'),
+  servedir: buildDirectory,
 })
 
 console.log(host,'   ----   ', port);

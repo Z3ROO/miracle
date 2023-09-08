@@ -12,7 +12,8 @@
   ],
   "type": "module",
   "scripts": {
-    "build-pkg": "tsc"
+    "build-pkg": "tsc",
+    "dev": "ts-node --esm ./src/scripts/dev.ts"
   },
   "keywords": [],
   "author": "",
