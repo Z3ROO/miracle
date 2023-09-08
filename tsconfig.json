@@ -9,5 +9,5 @@
     "sourceMap": true,
     "moduleResolution": "NodeNext"
   },
-  "include": ["src/**/*.ts", "src/**/*.js"]
+  "include": ["src/**/*.ts"]
 }
