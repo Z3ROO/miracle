@@ -2,21 +2,17 @@ import { IFiber } from "./Fiber.js";
 import { RootFiber } from "./RenderEngine.js";
 import { updateDom } from "./vDom.js";
 
+
 export class CommitFiber {
-  fiber: IFiber;
-  deletions: IFiber[];
+  static deletions: IFiber[] = [];
 
-  constructor(rootFiber: RootFiber, deletions: IFiber[]) {
-    this.fiber = rootFiber as IFiber;
-    this.deletions = deletions;
+  static commit(rootFiber: RootFiber) {
+
+    CommitFiber.deletions.forEach(CommitFiber.commitWork);
+    CommitFiber.commitWork((rootFiber as IFiber).child);
   }
 
-  public commit() {
-    this.deletions.forEach(this.commitWork);
-    this.commitWork(this.fiber.child);
-  }
-
-  private commitWork(fiber: IFiber) {
+  private static commitWork(fiber: IFiber) {
     if (!fiber)
       return;
 
@@ -26,23 +22,26 @@ export class CommitFiber {
       domParentFiber = domParentFiber.parent;
 
     const domParent = domParentFiber.dom;
-
+    
     if (fiber.effectTag === 'PLACEMENT' && fiber.dom != null)
       domParent.appendChild(fiber.dom);
     else if (fiber.effectTag === 'UPDATE' && fiber.dom != null)
       updateDom(fiber.dom, fiber.alternate.props, fiber.props);
-    else if (fiber.effectTag === 'DELETION')
-      this.commitDeletion(fiber, domParent as HTMLElement)
+    else if (fiber.effectTag === 'DELETION')       
+      CommitFiber.commitDeletion(fiber, domParent as HTMLElement)
+    
+    CommitFiber.commitWork(fiber.child);
+    CommitFiber.commitWork(fiber.sibling);
+  }  
 
-    this.commitWork(fiber.child);
-    this.commitWork(fiber.sibling);
-  }
-
-  private commitDeletion(fiber: IFiber, domParent: HTMLElement) {
-    if (fiber.dom)
-      domParent.removeChild(fiber.dom);
+  private static commitDeletion(fiber: IFiber, domParent: HTMLElement) {
+    if (fiber.dom) {
+      //requestAnimationFrame(() =>{
+        domParent.removeChild(fiber.dom);
+      //})
+    }
     else
-      this.commitDeletion(fiber.child, domParent);
+      CommitFiber.commitDeletion(fiber.child, domParent);
   }
 }
 

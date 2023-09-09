@@ -36,6 +36,7 @@ const ctx = await esbuild.context({
   jsxFactory: 'Miracle.createElement',
   target: 'es6',
   format: 'esm',
+  sourcemap: true,
   loader: {
     '.ts': 'ts',
     '.tsx': 'tsx'

@@ -11,35 +11,39 @@ export type Hook<T> = {
   queue: ActionFn<T>[]
 }
 
-let wipFiber: IFiber = null;
+let currentFiber: IFiber = null;
 let hookIndex: number = null;
 
 export function mountFunctionComponent(fiber: IFiber) {
-  wipFiber = fiber;
+  currentFiber = fiber;
   hookIndex = 0;
 
   return (fiber.type as FunctionComponent)(fiber.props);
 }
 
-export function useState<T>(initial: T): [T, (action: ActionFn<T>) => void] {
-  const oldHook = (wipFiber.alternate && wipFiber.alternate.hooks && wipFiber.alternate.hooks[hookIndex]);
+export function useState<T>(initial: T): [T, (action: ActionFn<T>|T) => void] {
+  const existingHook =  (currentFiber.alternate && currentFiber.alternate.hooks && currentFiber.alternate.hooks[hookIndex]);
 
   const hook: Hook<T> = {
-    state: oldHook ? oldHook.state : initial,
+    state: existingHook ? existingHook.state : initial,
     queue: []
   }
 
-  const actions = oldHook ? oldHook.queue : [];
+  const actions = existingHook ? existingHook.queue : [];
   actions.forEach(action => {
     hook.state = action(hook.state);
   });
 
-  function setState(action: ActionFn<T>) {
-    hook.queue.push(action);
+  function setState(action: ActionFn<T>|T) {
+    if (action instanceof Function)
+      hook.queue.push(action);
+    else
+      hook.queue.push(() => action);
+
     RenderEngine.reRender();
   }
 
-  wipFiber.hooks.push(hook);
+  currentFiber.hooks.push(hook);
   hookIndex++;
 
   return [hook.state, setState];

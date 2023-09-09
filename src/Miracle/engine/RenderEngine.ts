@@ -14,6 +14,7 @@ export class RenderEngine {
   static currentRoot: RootFiber;
   static nextUnitOfWork: RootFiber|IFiber;
   static deletions: IFiber[];
+  static reRenderScheduled: boolean = false;
 
   private constructor() {}
 
@@ -26,7 +27,7 @@ export class RenderEngine {
       alternate: RenderEngine.currentRoot
     }
 
-    RenderEngine.deletions = [];
+    CommitFiber.deletions = [];
     RenderEngine.nextUnitOfWork = RenderEngine.wipRoot;
     requestIdleCallback(RenderEngine.workLoop);
   }
@@ -38,7 +39,7 @@ export class RenderEngine {
       alternate: RenderEngine.currentRoot
     }
 
-    RenderEngine.deletions = [];
+    CommitFiber.deletions = [];
     RenderEngine.nextUnitOfWork = RenderEngine.wipRoot;
     requestIdleCallback(RenderEngine.workLoop);
   }
@@ -93,14 +94,13 @@ export class RenderEngine {
   }
 
   private static commitRoot() {
-    const commiter = new CommitFiber(RenderEngine.wipRoot, RenderEngine.deletions);
-    commiter.commit();
+    CommitFiber.commit(RenderEngine.wipRoot);
     RenderEngine.currentRoot = RenderEngine.wipRoot;
     RenderEngine.wipRoot = null;
   }
 
   public static queueDeletion(fiber: IFiber) {
     fiber.effectTag = 'DELETION';
-    RenderEngine.deletions.push(fiber);
+    CommitFiber.deletions.push(fiber);
   }
 }

@@ -8,4 +8,7 @@ const Miracle = {
   useState,
  };
 
+export const render = Miracle.render;
+export { useState } from './engine/FunctionComponent.js';
+
 export default Miracle

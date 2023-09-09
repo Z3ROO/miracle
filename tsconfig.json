@@ -7,7 +7,8 @@
     "noImplicitAny": false,
     "declaration": true,
     "sourceMap": true,
+    "jsx": "preserve",
     "moduleResolution": "NodeNext"
   },
-  "include": ["src/cli/*.ts", "src/Miracle/*.ts", "src/scripts/*.ts"]
+  "include": ["src/cli/*.ts", "src/Miracle/*.ts", "src/scripts/*.ts", "src/index.tsx"]
 }

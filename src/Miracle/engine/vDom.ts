@@ -11,6 +11,7 @@ export interface IElement {
 }
 
 export function createElement(type: ElementType, props: {[key: string]: any}, ...children: (string|number|IFiber|IElement)[]): IElement {
+  children = children.flat();
   return {
     type,
     props: {
