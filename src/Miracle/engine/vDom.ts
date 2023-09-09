@@ -52,9 +52,10 @@ export function createDom(fiber: IFiber): HTMLElement|Text {
 }
 
 const isEvent = (key:string) => key.startsWith('on');
-const isProperty = (key: string) => key !== 'children' && !isEvent(key) && !isStyle(key);
+const isProperty = (key: string) => key !== 'children' && !isEvent(key) && !isStyle(key) && !isClass(key);
 const isElement = (dom: HTMLElement|Text) => dom.nodeType === Node.ELEMENT_NODE;
 const isStyle = (key: string) => key === 'style';
+const isClass = (key: string) => key === 'className';
 const isUnchanged = (prev: ElementProps, next: ElementProps) => (key: string) => prev[key] === next[key];
 
 export function updateDom(dom: HTMLElement|Text, prevProps: ElementProps|null, nextProps: ElementProps) {
@@ -76,6 +77,8 @@ export function updateDom(dom: HTMLElement|Text, prevProps: ElementProps|null, n
     }
     else if (isProperty(prop)) {
       (dom as any)[prop] = "";
+    } else if (isClass(prop) && isElement(dom)) {
+      (dom as HTMLElement).classList.remove(...prevProps[prop].split(' '))
     }
   }
 
@@ -97,6 +100,8 @@ export function updateDom(dom: HTMLElement|Text, prevProps: ElementProps|null, n
     }
     else if (isProperty(prop)) {
       (dom as any)[prop] = nextProps[prop];
+    } else if (isClass(prop) && isElement(dom)) {
+      (dom as HTMLElement).classList.add(...nextProps[prop].split(' '))
     }
   }
 
