@@ -52,11 +52,21 @@ export function createDom(fiber: IFiber): HTMLElement|Text {
 }
 
 const isEvent = (key:string) => key.startsWith('on');
-const isProperty = (key: string) => key !== 'children' && !isEvent(key);
+const isProperty = (key: string) => key !== 'children' && !isEvent(key) && !isStyle(key);
+const isElement = (dom: HTMLElement|Text) => dom.nodeType === Node.ELEMENT_NODE;
+const isStyle = (key: string) => key === 'style';
 const isUnchanged = (prev: ElementProps, next: ElementProps) => (key: string) => prev[key] === next[key];
 
 export function updateDom(dom: HTMLElement|Text, prevProps: ElementProps|null, nextProps: ElementProps) {
   for (const prop in prevProps) {
+
+    if (isStyle(prop) && isElement(dom)) {
+      for (const styleProp in nextProps[prop] as any) {
+
+        (dom as HTMLElement).style[styleProp] = '';
+      }
+    }
+
     if (prevProps && isUnchanged(prevProps, nextProps)(prop))
       continue;
 
@@ -70,6 +80,14 @@ export function updateDom(dom: HTMLElement|Text, prevProps: ElementProps|null, n
   }
 
   for (const prop in nextProps) {
+    if (isStyle(prop) && isElement(dom)) {
+      for (const styleProp in nextProps[prop] as any) {
+        const value = nextProps[prop][styleProp];
+
+        (dom as HTMLElement).style[styleProp] = value;
+      }
+    }
+
     if (prevProps && isUnchanged(prevProps, nextProps)(prop))
       continue;
 
@@ -80,5 +98,14 @@ export function updateDom(dom: HTMLElement|Text, prevProps: ElementProps|null, n
     else if (isProperty(prop)) {
       (dom as any)[prop] = nextProps[prop];
     }
+  }
+
+  if (dom.nodeType === Node.ELEMENT_NODE && nextProps.styles)
+    applyStyle(dom as HTMLElement, nextProps.styles)
+}
+
+function applyStyle(dom: HTMLElement, styles: any) {
+  for (const style in styles) {
+    dom.style[style] = styles[style];
   }
 }

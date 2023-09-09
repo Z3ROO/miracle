@@ -16,7 +16,9 @@ function App() {
           return (
             <li>
               <span>{item.todo}</span>
-              <button onClick={()=>{
+              <button style={{
+                backgroundColor: 'red'
+              }} onClick={()=>{
                 setList(list => {
                   list[index].done = !list[index].done;
                   return list;
