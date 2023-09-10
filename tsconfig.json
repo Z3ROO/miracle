@@ -10,5 +10,5 @@
     "jsx": "preserve",
     "moduleResolution": "NodeNext"
   },
-  "include": ["src/cli/*.ts", "src/Miracle/*.ts", "src/scripts/*.ts", "src/index.tsx"]
+  "include": ["src/cli/**/*.ts", "src/Miracle/**/*.ts", "src/scripts/**/*.ts", "src/index.tsx"]
 }
