@@ -36,9 +36,9 @@ export class CommitFiber {
 
   private static commitDeletion(fiber: IFiber, domParent: HTMLElement) {
     if (fiber.dom) {
-      //requestAnimationFrame(() =>{
+      requestAnimationFrame(() =>{
         domParent.removeChild(fiber.dom);
-      //})
+      })
     }
     else
       CommitFiber.commitDeletion(fiber.child, domParent);

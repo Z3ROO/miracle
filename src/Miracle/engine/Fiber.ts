@@ -60,10 +60,11 @@ export class Fiber {
 
       if (index === 0)
         fiber.child = newFiber;
-      else
+      else if (prevSibling)
         prevSibling.sibling = newFiber;
 
       prevSibling = newFiber;
+      newFiber = undefined;
       index++;
     }
     
