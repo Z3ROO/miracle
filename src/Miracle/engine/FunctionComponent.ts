@@ -11,6 +11,10 @@ export type Hook<T> = {
   queue: ActionFn<T>[]
 }
 
+export type Ref<T> = {
+  current: T
+}
+
 let currentFiber: IFiber = null;
 let hookIndex: number = null;
 
@@ -22,7 +26,10 @@ export function mountFunctionComponent(fiber: IFiber) {
 }
 
 export function useState<T>(initial: T): [T, (action: ActionFn<T>|T) => void] {
-  const existingHook =  (currentFiber.alternate && currentFiber.alternate.hooks && currentFiber.alternate.hooks[hookIndex]);
+  const existingHook = (
+    currentFiber.alternate && currentFiber.alternate.hooks 
+    && currentFiber.alternate.hooks[hookIndex] as Hook<T>
+  );
 
   const hook: Hook<T> = {
     state: existingHook ? existingHook.state : initial,
@@ -47,4 +54,23 @@ export function useState<T>(initial: T): [T, (action: ActionFn<T>|T) => void] {
   hookIndex++;
 
   return [hook.state, setState];
+}
+
+export function useRef<T>(value:T): {current:T} {
+  const existingHook = (
+    currentFiber.alternate && currentFiber.alternate.hooks 
+    && currentFiber.alternate.hooks[hookIndex] as Ref<T>
+  );
+  
+  hookIndex++;
+
+  if (existingHook) {
+    currentFiber.hooks.push(existingHook);
+    return existingHook;
+  }
+
+  currentFiber.hooks.push({current: value});  
+  return {
+    current:value
+  }
 }

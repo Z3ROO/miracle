@@ -1,4 +1,4 @@
-import { Hook } from "./FunctionComponent.js";
+import { Hook, Ref } from "./FunctionComponent.js";
 import { RenderEngine } from "./RenderEngine.js";
 import { ElementChildren, IElement } from "./vDom.js";
 
@@ -9,7 +9,7 @@ export interface IFiber extends IElement {
   sibling?: IFiber
   alternate: IFiber|null
   effectTag: 'PLACEMENT'|'UPDATE'|'DELETION'
-  hooks: Hook<any>[]
+  hooks: (Hook<any>|Ref<any>)[]
 }
 
 export class Fiber {
