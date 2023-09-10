@@ -5,32 +5,34 @@ import { join } from 'path';
 import fs from 'fs';
 import includeBundleIntoHTML from './config/includeScripts.js';
 
-const cwd = process.cwd();
-const entryDirectory = join(cwd, 'src', 'index.tsx');
+export function build() {
+  const cwd = process.cwd();
+  const entryDirectory = join(cwd, 'src', 'index.tsx');
 
-const buildDirectory = join(cwd, 'build');
+  const buildDirectory = join(cwd, 'build');
 
-const publicDir = join(cwd, 'public');
+  const publicDir = join(cwd, 'public');
 
-if (fs.existsSync(buildDirectory))
-  fs.rmSync(buildDirectory, { recursive: true });
+  if (fs.existsSync(buildDirectory))
+    fs.rmSync(buildDirectory, { recursive: true });
 
-fs.cpSync(publicDir, buildDirectory, {recursive: true})
+  fs.cpSync(publicDir, buildDirectory, {recursive: true})
 
-let htmlFile = fs.readFileSync(join(buildDirectory, 'index.html'), 'utf-8');
-htmlFile = includeBundleIntoHTML(htmlFile);
+  let htmlFile = fs.readFileSync(join(buildDirectory, 'index.html'), 'utf-8');
+  htmlFile = includeBundleIntoHTML(htmlFile);
 
-fs.writeFileSync(join(buildDirectory, 'index.html'), htmlFile);
+  fs.writeFileSync(join(buildDirectory, 'index.html'), htmlFile);
 
-esbuild.build({
-  entryPoints:[entryDirectory],
-  bundle: true,
-  outfile: './build/static/js/bundle.js',
-  jsxFactory: 'Miracle.createElement',
-  target: 'es6',
-  format: 'esm',
-  loader: {
-    '.ts': 'ts',
-    '.tsx': 'tsx'
-  }
-});
+  esbuild.build({
+    entryPoints:[entryDirectory],
+    bundle: true,
+    outfile: './build/static/js/bundle.js',
+    jsxFactory: 'Miracle.createElement',
+    target: 'es6',
+    format: 'esm',
+    loader: {
+      '.ts': 'ts',
+      '.tsx': 'tsx'
+    }
+  });
+}
