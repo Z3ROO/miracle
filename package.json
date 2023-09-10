@@ -1,6 +1,6 @@
 {
   "name": "@z3ro/miracle",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "",
   "main": "dist/Miracle/index.js",
   "types": "dist/Miracle/index.d.ts",
@@ -8,7 +8,9 @@
     "miracle" :"dist/cli/index.js"
   },
   "files": [
-    "dist/**"
+    "dist/cli/**",
+    "dist/Miracle/**",
+    "dist/scripts/**"
   ],
   "type": "module",
   "scripts": {
