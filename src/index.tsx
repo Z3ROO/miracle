@@ -1,4 +1,4 @@
-import Miracle, {render, useState} from './Miracle/index.js';
+import Miracle, {render, useRef, useState} from './Miracle/index.js';
 
 function App() {
   const [input, setInput] = useState('');
@@ -8,6 +8,8 @@ function App() {
     {todo: 'teste3', done: true},
     {todo: 'teste4', done: false}
   ]);
+
+  const ref = useRef<any>('Test drive')
   
   
   return (
@@ -27,6 +29,7 @@ function App() {
                 return;
               setList(prevList => prevList.concat({todo: input, done: false}));
               setInput('');
+              ref.current = {todo: input, done: false};
             }}
           >
             add
@@ -75,6 +78,11 @@ function App() {
             })
           }
         </ul>
+        <div>
+          <pre>
+            {JSON.stringify(ref, null, 2)}
+          </pre>
+        </div>
       </div>
     </div>
   )
