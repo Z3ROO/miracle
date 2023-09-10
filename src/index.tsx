@@ -9,8 +9,7 @@ function App() {
     {todo: 'teste4', done: false}
   ]);
 
-  const ref = useRef<any>('Test drive')
-  
+  const ref = useRef<any>('Test drive');  
   
   return (
     <div style={{
